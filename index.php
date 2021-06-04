@@ -26,6 +26,13 @@
  *  - tu dois insérer les tailles disponibles pour les mugs: (S M XL XXL)
  *  - tu dois exporter la table dans le dossier sql.
  */
+require_once "config/configuration.php";
+require_once "config/connect.php";
+
+
+ $titre = "Mugs Party";
+
+ $couleur = array("Noir","Blanc","Violet","Marron","Rose","Vert","Jaune");
 ?>
 
 <!doctype html>
@@ -40,10 +47,11 @@
         <link rel="stylesheet" href="css/bootstrap-v4.6.0.css">
         <link rel="stylesheet" href="css/font-awesome-4.7.0.css">
         <link rel="stylesheet" href="css/custom.css">
+        <title><?php echo $titre; ?></title>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="/"><img src="images/logo.png" alt="logo" class="mr-2"></a>
+            <a class="navbar-brand" href="/"><img src="images/logo.png" alt="logo" class="mr-2"><?php echo $titre; ?></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -74,8 +82,11 @@
                      *
                      * Le lien "Ajouter un mug" ci dessous doit être visible et accessible seulement pour les utilisateurs connectés (user).
                      */
+
+                    if(!isset($_SESSION['user'])){
+                        echo '<a href="#" class="btn btn-outline-secondary"><i class="fa fa-plus mr-2"></i>Ajouter un mug</a>';
+                    }
                     ?>
-                    <a href="#" class="btn btn-outline-secondary"><i class="fa fa-plus mr-2"></i>Ajouter un mug</a>
 
                 </div>
             </div>
@@ -116,10 +127,67 @@
          * Exemple: Si l'utilisateur final demande tous les mugs qui ne sont pas en stock, une fois la recherches effectuée,
          *          la barre de recherches doit continuer à afficher le select En stock à Non. (idem pour les autres champs)
          */
+
         ?>
 
         <div id="sorting-bar" class="container-fluid sorting-bar">
             <!-- ton code html, php de la sorting-bar -->
+            <div class="row">
+                <form class="form-inline search" method="get">
+                <label for="stock" class="ml-1 mr-2">En Stock:</label>
+                <select class="form-control" id="stock" name="stock" class="col-2 mx-5">
+                    <option>All</option>
+                    <option>Oui</option>
+                    <option>Non</option>
+                </select>
+                <label for="tarif" class="ml-1 mr-2">Tarif:</label>
+                <select class="form-control" id="tarif" name="tarif" class="col-2">
+                    <option>All</option>
+                    <option>Superieur</option>
+                    <option>Inferieur</option>
+                </select>
+                <p class="mx-1">à</p>
+                <label for="prix"></label>
+                <input id="prix" name="prix" type="number" min="1" max="60" value="30" class="mx-auto"><p class="mr-3"> €</p>
+                <label for="couleur" class="ml-1 mr-2">Couleur:</label>
+                <select class="form-control" id="couleur" name="couleur" class="col mx-auto">
+                    <option>All</option>
+                    <?php
+                    for($i=0; $i < count($couleur); $i++){
+                        echo '<option>'.$couleur[$i].'</option>';
+                    };
+                    ?>
+                </select>
+                <label for="taille" class="ml-1 mr-2">Taille:</label>
+                <select class="form-control" id="taille" name="taille" class="col mx-auto">
+                    <option>All</option>
+                    <?php
+                        $sql = "SELECT * FROM sizes";
+                        if($result = $mysqli->query($sql)){
+                            if ($result->num_rows > 0){
+                                while($size = $result->fetch_assoc()){
+                                    echo '<option>'.$size['sizes'].'</option>';
+                                }
+                            }
+                        };
+                    ?>
+                </select>
+                <label for="new" class="ml-1 mr-2">Nouveautés:</label>
+                <select class="form-control" id="new" name="new" class="col mx-auto">
+                    <option>All</option>
+                    <option>Non</option>
+                    <option>Oui</option>
+                </select>
+                <label for="tendance" class="ml-1 mr-2" >Tendances:</label>
+                <select class="form-control" id="tendance" name="tendance" class="col mx-auto">
+                    <option>All</option>
+                    <option>Non</option>
+                    <option>Oui</option>
+                </select>
+                <button type="submit" class="btn btn-success">Trier</button>
+                <button type="button" class="btn btn-danger">Reset</button>        
+                </form>
+            </div>
         </div>
 
         <?php
@@ -158,6 +226,9 @@
 
         <div class="container mt-40">
             <!-- ici ton code PHP pour afficher les mugs trouvés. -->
+            <?php
+            require_once "form/sortingForm.php";
+            ?>
         </div>
 
         <div class="spacer spacer-md"></div>
@@ -165,7 +236,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-5 col-sm-6 footer-box">
-                        <p style="padding-right:80px;"><h4>.</h4>On y trouve de tout et surtout du n'importe quoi !!</p>
+                        <p style="padding-right:80px;"><h4><?php echo $titre; ?></h4>On y trouve de tout et surtout du n'importe quoi !!</p>
                         <h3 class="footer-heading">Nous suivre</h3>
                         <ul class="social-icons">
                             <li><a href="#" target="_blank"><i class="rounded-circle fa fa-google"></i></a></li>
@@ -175,7 +246,7 @@
                         </ul>
                         <h3 class="footer-heading">Contact</h3>
                         <ul class="contact-info">
-                            <li><span class="icon fa fa-home"></span>, 67000 Strasbourg</li>
+                            <li><span class="icon fa fa-home"></span><?php echo $titre; ?>, 67000 Strasbourg</li>
                             <li><span class="icon fa fa-phone"></span>03.99.98.97.96</li>
                             <li><span class="icon fa fa-envelope"></span>contact@mugsparty.fr</li>
                         </ul>
@@ -226,7 +297,7 @@
                     </div>
                     <div class="col-md-12 footer-box">
                         <div class="copyright">
-                        <p>&copy; 2021. Tous droits réservés.</p>
+                        <p>&copy; 2021. <?php echo $titre; ?> Tous droits réservés.</p>
                         </div>
                     </div>
                 </div>

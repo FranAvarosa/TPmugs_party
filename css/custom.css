@@ -25,6 +25,10 @@ div.jumbotron.jumbotron-fluid {
 .mt-40 {
     margin-top:40px;
 }
+.search{
+    margin-right: 10%;
+    margin-left: 10%;
+}
 /* FOOTER */
 #footer {
     clear: both;
