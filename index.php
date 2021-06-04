@@ -83,7 +83,7 @@ require_once "config/connect.php";
                      * Le lien "Ajouter un mug" ci dessous doit être visible et accessible seulement pour les utilisateurs connectés (user).
                      */
 
-                    if(!isset($_SESSION['user'])){
+                    if(isset($_SESSION['user'])){
                         echo '<a href="#" class="btn btn-outline-secondary"><i class="fa fa-plus mr-2"></i>Ajouter un mug</a>';
                     }
                     ?>
